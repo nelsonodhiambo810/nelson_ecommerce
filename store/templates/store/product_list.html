@@ -1,0 +1,83 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="bg-dark text-white text-center py-5 mb-5 shadow">
+    <div class="container py-5">
+        <h1 class="display-4 fw-bold mb-3">Premium Sound, Unleashed.</h1>
+        <p class="lead text-secondary mb-0">Discover top-tier audio gear built for professionals and true audiophiles.</p>
+    </div>
+</div>
+
+<div class="container mb-5 pb-5">
+    
+    <div class="d-flex justify-content-center flex-wrap gap-2 mb-5">
+        <a href="{% url 'store:product_list' %}" class="btn {% if not category %}btn-dark{% else %}btn-outline-dark{% endif %} rounded-pill px-4 fw-bold shadow-sm">All Gear</a>
+        
+        {% for c in categories %}
+            <a href="{% url 'store:product_list_by_category' c.slug %}" class="btn {% if category and category.slug == c.slug %}btn-dark{% else %}btn-outline-dark{% endif %} rounded-pill px-4 fw-bold shadow-sm">
+                {{ c.name }}
+            </a>
+        {% endfor %}
+    </div>
+
+    {% if query %}
+        <div class="alert alert-light border shadow-sm rounded-4 text-center mb-5">
+            <h4 class="text-dark mb-0">Search results for: <strong>"{{ query }}"</strong></h4>
+        </div>
+    {% endif %}
+
+    {% if products|length == 0 %}
+        <div class="text-center py-5">
+            <h2 class="text-muted fw-bold mb-3">No gear found.</h2>
+            <p class="lead">Try adjusting your search or category filter.</p>
+            <a href="{% url 'store:product_list' %}" class="btn btn-dark rounded-pill px-4 mt-3">Clear Filters</a>
+        </div>
+    {% endif %}
+    
+    <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-5">
+        {% for product in products %}
+        <div class="col">
+            <div class="card h-100 shadow-sm border-0 rounded-4 overflow-hidden product-card bg-white">
+                
+                <a href="{% url 'store:product_detail' product.slug %}">
+                    {% if product.image %}
+                        <img src="{{ product.image.url }}" class="card-img-top" alt="{{ product.name }}" style="height: 300px; object-fit: cover;">
+                    {% else %}
+                        <div class="bg-light d-flex align-items-center justify-content-center" style="height: 300px;">
+                            <span class="text-muted fw-bold">No Image Available</span>
+                        </div>
+                    {% endif %}
+                </a>
+                
+                <div class="card-body d-flex flex-column text-center p-4">
+                    <h4 class="card-title fw-bold text-dark mb-1">{{ product.name }}</h4>
+                    <p class="text-success fw-bold fs-4 mb-4">${{ product.price }}</p>
+                    
+                    <div class="mt-auto">
+                        <a href="{% url 'store:product_detail' product.slug %}" class="btn btn-dark btn-lg w-100 rounded-pill fw-bold shadow-sm">View Details</a>
+                    </div>
+                </div>
+                
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+    
+</div>
+
+<style>
+    /* This makes the cards float up slightly when you hover over them */
+    .product-card {
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+    .product-card:hover {
+        transform: translateY(-8px);
+        box-shadow: 0 1rem 3rem rgba(0,0,0,.175)!important;
+    }
+    
+    /* Makes the body background slightly gray so the white cards pop */
+    body {
+        background-color: #f8f9fa;
+    }
+</style>
+{% endblock %}

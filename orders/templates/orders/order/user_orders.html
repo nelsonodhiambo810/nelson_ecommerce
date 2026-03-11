@@ -1,0 +1,56 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container mt-5 mb-5">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2 class="fw-bold">My Order History</h2>
+        <a href="{% url 'store:product_list' %}" class="btn btn-outline-dark rounded-pill">Back to Store</a>
+    </div>
+
+    {% if orders %}
+        <div class="accordion shadow-sm" id="ordersAccordion">
+            {% for order in orders %}
+            <div class="accordion-item border-0 mb-3 rounded-4 shadow-sm">
+                
+                <h2 class="accordion-header" id="heading{{ order.id }}">
+                    <button class="accordion-button collapsed rounded-4 bg-white" type="button" data-bs-toggle="collapse" data-bs-target="#collapse{{ order.id }}">
+                        <span class="fw-bold me-auto text-dark">Order #{{ order.id }}</span>
+                        <span class="badge bg-success me-3 py-2 px-3">Total: ${{ order.get_total_cost }}</span>
+                    </button>
+                </h2>
+                
+                <div id="collapse{{ order.id }}" class="accordion-collapse collapse bg-light" data-bs-parent="#ordersAccordion">
+                    <div class="accordion-body p-4">
+                        <table class="table table-borderless mb-0">
+                            <thead class="text-muted border-bottom">
+                                <tr>
+                                    <th>Product</th>
+                                    <th>Price</th>
+                                    <th>Qty</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for item in order.items.all %}
+                                <tr>
+                                    <td class="fw-bold text-dark">{{ item.product.name }}</td>
+                                    <td>${{ item.price }}</td>
+                                    <td>x{{ item.quantity }}</td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+            </div>
+            {% endfor %}
+        </div>
+    {% else %}
+        <div class="alert alert-light text-center p-5 shadow-sm rounded-4 border-0">
+            <h4 class="fw-bold text-muted mb-3">You haven't placed any orders yet!</h4>
+            <p>Time to upgrade your sound system.</p>
+            <a href="{% url 'store:product_list' %}" class="btn btn-dark btn-lg rounded-pill mt-2">Shop Gear</a>
+        </div>
+    {% endif %}
+</div>
+{% endblock %}

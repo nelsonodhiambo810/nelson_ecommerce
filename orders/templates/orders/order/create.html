@@ -1,0 +1,65 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container mt-5 mb-5 pb-5">
+    <div class="row g-5">
+        
+        <div class="col-md-7 col-lg-8">
+            <h3 class="fw-bold mb-4 text-dark">Shipping Details</h3>
+            <div class="card shadow-sm border-0 rounded-4 p-4 p-md-5 bg-white">
+                <form method="post" action="{% url 'orders:order_create' %}" class="needs-validation">
+                    {% csrf_token %}
+                    
+                    <div class="row g-3">
+                        {% for field in form %}
+                            <div class="col-12 col-md-6 mb-3">
+                                <label class="form-label fw-bold text-muted">{{ field.label }}</label>
+                                {{ field }} 
+                            </div>
+                        {% endfor %}
+                    </div>
+
+                    <hr class="my-4">
+                    <button class="btn btn-success btn-lg w-100 rounded-pill fw-bold shadow-sm" type="submit">
+                        Place Order & Pay
+                    </button>
+                </form>
+            </div>
+        </div>
+        
+        <div class="col-md-5 col-lg-4">
+            <h3 class="fw-bold mb-4 text-dark">Your Order</h3>
+            <div class="card shadow-sm border-0 rounded-4 p-4 bg-light">
+                
+                <ul class="list-group list-group-flush mb-3 rounded-3">
+                    {% for item in cart %}
+                    <li class="list-group-item d-flex justify-content-between lh-sm bg-transparent px-0 py-3 border-bottom">
+                        <div>
+                            <h6 class="my-0 fw-bold text-dark">{{ item.product.name }}</h6>
+                            <small class="text-muted">Qty: {{ item.quantity }}</small>
+                        </div>
+                        <span class="text-success fw-bold">${{ item.total_price }}</span>
+                    </li>
+                    {% endfor %}
+                </ul>
+                
+                <div class="d-flex justify-content-between text-dark fw-bold display-6 border-top pt-4 mt-2">
+                    <span class="fs-4">Total</span>
+                    <span>${{ cart.get_total_price }}</span>
+                </div>
+                
+            </div>
+        </div>
+
+    </div>
+</div>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+        let inputs = document.querySelectorAll("form input, form select, form textarea");
+        inputs.forEach(function(input) {
+            input.classList.add("form-control", "form-control-lg", "bg-light", "border-0");
+        });
+    });
+</script>
+{% endblock %}

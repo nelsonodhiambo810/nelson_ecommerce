@@ -1,0 +1,15 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container mt-5 text-center">
+    <div class="card shadow border-0 p-5 bg-white">
+        <h1 class="display-4 text-success fw-bold mb-4">Thank You!</h1>
+        <p class="lead">Your order has been successfully placed.</p>
+        <div class="alert alert-secondary d-inline-block mx-auto mt-3 border-0">
+            <strong>Order Number:</strong> #{{ order.id }}
+        </div>
+        <p class="mt-4 text-muted">We will send a confirmation email with tracking details shortly.</p>
+        <a href="{% url 'store:product_list' %}" class="btn btn-dark btn-lg mt-4 px-5">Continue Shopping</a>
+    </div>
+</div>
+{% endblock %}

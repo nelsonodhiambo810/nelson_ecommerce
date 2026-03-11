@@ -1,0 +1,42 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container mt-5 mb-5">
+    <div class="row justify-content-center">
+        <div class="col-md-6 col-lg-5">
+            <div class="card shadow-lg border-0 rounded-4">
+                <div class="card-header bg-success text-white text-center py-4 border-0 rounded-top-4">
+                    <h3 class="mb-0 fw-bold">Pay with M-Pesa</h3>
+                </div>
+                <div class="card-body bg-white p-4 p-md-5 rounded-bottom-4">
+                    
+                    {% if messages %}
+                        {% for message in messages %}
+                            <div class="alert alert-{{ message.tags }} text-center fw-bold shadow-sm">
+                                {{ message }}
+                            </div>
+                        {% endfor %}
+                    {% endif %}
+
+                    <div class="text-center mb-4">
+                        <h5 class="text-muted">Order #{{ order.id }}</h5>
+                        <h2 class="fw-bold text-dark">Total: ${{ order.get_total_cost|default:"12000.00" }}</h2>
+                    </div>
+
+                    <form method="post">
+                        {% csrf_token %}
+                        <div class="mb-4">
+                            <label for="phone_number" class="form-label fw-bold text-muted mb-1">M-Pesa Phone Number</label>
+                            <input type="text" name="phone_number" class="form-control form-control-lg bg-light" id="phone_number" placeholder="e.g., 0712345678" required>
+                            <small class="text-muted mt-2 d-block">We will send an STK push directly to your phone.</small>
+                        </div>
+
+                        <button type="submit" class="btn btn-success btn-lg w-100 fw-bold shadow-sm">Send Payment Prompt</button>
+                    </form>
+
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
