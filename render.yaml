@@ -44,5 +44,5 @@ services:
   # ─── PostgreSQL Database ────────────────────────────────────
 databases:
   - name: nyar-gi-jack-db
-    databaseName: nyargiJack
+    databaseName: nyargijack
     plan: free                       # Free tier: 1GB, perfect for launch
