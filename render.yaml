@@ -16,8 +16,12 @@ services:
       python manage.py migrate --no-input
     startCommand: gunicorn core.wsgi:application --workers 2 --threads 2 --timeout 120 --bind 0.0.0.0:$PORT
     envVars:
+
+
       - key: DJANGO_SETTINGS_MODULE
         value: core.settings.production
+      - key: PYTHON_VERSION
+        value: 3.13.13  
       - key: DJANGO_SECRET_KEY
         generateValue: true          # Render auto-generates a secure key
       - key: DATABASE_URL
