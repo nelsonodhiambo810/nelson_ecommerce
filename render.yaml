@@ -9,6 +9,7 @@ services:
   - type: web
     name: nyar-gi-jack-sound
     runtime: python
+    plan: free
     buildCommand: |
       pip install -r requirements.txt &&
       python manage.py collectstatic --no-input &&
