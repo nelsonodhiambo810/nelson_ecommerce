@@ -7,10 +7,10 @@
 
 # ─── Core Django ─────────────────────────────────────────────
 Django==5.0.6
- gunicorn==22.0.0              # Production WSGI server for Render
+gunicorn==22.0.0              # Production WSGI server for Render
 
 # ─── Database ────────────────────────────────────────────────
- psycopg2-binary==2.9.9        # PostgreSQL adapter
+psycopg2-binary==2.9.9        # PostgreSQL adapter
 dj-database-url==2.2.0        # Parse DATABASE_URL from Render environment
 
 # ─── Static Files ────────────────────────────────────────────
