@@ -13,14 +13,25 @@ DEBUG = False
 ALLOWED_HOSTS = os.environ.get('ALLOWED_HOSTS', '').split(',')
 
 # ─── DATABASE: PostgreSQL via Render ─────────────────────────────────────────
-# Render automatically injects DATABASE_URL into the environment
-DATABASES = {
-    'default': dj_database_url.config(
-        default=os.environ['DATABASE_URL'],
-        conn_max_age=600,          # Persistent connections — big performance win
-        conn_health_checks=True,
-    )
-}
+# Render automatically injects DATABASE_URL into the environment during deployment.
+# We use a fallback layout so the build phase (collectstatic) doesn't crash.
+DATABASE_URL = os.environ.get('DATABASE_URL')
+
+if DATABASE_URL:
+    DATABASES = {
+        'default': dj_database_url.config(
+            default=DATABASE_URL,
+            conn_max_age=600,          # Persistent connections
+            conn_health_checks=True,
+        )
+    }
+else:
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.sqlite3',
+            'NAME': BASE_DIR / 'db.sqlite3',
+        }
+    }
 
 # ─── SECURITY HEADERS ────────────────────────────────────────────────────────
 SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
