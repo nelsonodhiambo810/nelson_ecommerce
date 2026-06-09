@@ -1,0 +1,110 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<style>
+    .pulse-icon { 
+        font-size: 4.5rem; 
+        color: #198754; /* Bootstrap Success Green */
+        animation: pulse 1.5s infinite; 
+    }
+    @keyframes pulse { 
+        0% { transform: scale(0.95); text-shadow: 0 0 0 rgba(25, 135, 84, 0.7); }
+        70% { transform: scale(1.1); text-shadow: 0 0 20px rgba(25, 135, 84, 0); }
+        100% { transform: scale(0.95); text-shadow: 0 0 0 rgba(25, 135, 84, 0); } 
+    }
+    .progress { height: 8px; border-radius: 4px; margin-top: 30px; background-color: #e9ecef; }
+    .progress-bar { transition: width 1s linear; }
+    #timeout-section { display: none; }
+</style>
+
+<div class="container mt-5 mb-5 text-center">
+    <div class="row justify-content-center">
+        <div class="col-md-8 col-lg-6">
+            <div class="card shadow-lg border-0 rounded-4 p-5">
+                
+                <div id="polling-section">
+                    <i class="fas fa-mobile-alt pulse-icon mb-4" id="main-icon"></i>
+                    
+                    <h2 class="fw-bold text-dark" id="status-text">Check Your Phone</h2>
+                    <h5 class="text-muted mb-4">Order #{{ order.id }}</h5>
+                    
+                    <p class="lead">Please enter your M-Pesa PIN on your phone to complete the transaction.</p>
+                    
+                    <div class="d-flex justify-content-center align-items-center gap-2 mt-4" id="spinner-container">
+                        <div class="spinner-border text-success spinner-border-sm" role="status"></div>
+                        <span class="text-success fw-bold">Awaiting Safaricom confirmation...</span>
+                    </div>
+
+                    <div class="progress">
+                        <div class="progress-bar bg-success progress-bar-striped progress-bar-animated" id="time-bar" role="progressbar" style="width: 100%;"></div>
+                    </div>
+                    <p class="text-muted mt-2 small" id="timer-text">Timeout in 60s</p>
+                </div>
+
+                <div id="timeout-section">
+                    <i class="fas fa-exclamation-triangle text-warning mb-4" style="font-size: 4.5rem;"></i>
+                    <h2 class="fw-bold text-dark">Request Timed Out</h2>
+                    <p class="lead mb-4">We didn't receive a confirmation. You may have cancelled the prompt, or it took too long.</p>
+                    <a href="{% url 'payments:process' order.id %}" class="btn btn-success btn-lg fw-bold w-100 rounded-pill">
+                        Try Again
+                    </a>
+                </div>
+
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+        const orderId = "{{ order.id }}";
+        const statusUrl = `/payments/status/${orderId}/`; 
+        
+        let timeLeft = 60;
+        const timerText = document.getElementById('timer-text');
+        const timeBar = document.getElementById('time-bar');
+        const pollingSection = document.getElementById('polling-section');
+        const timeoutSection = document.getElementById('timeout-section');
+
+        // 1. Countdown Timer
+        const countdown = setInterval(() => {
+            timeLeft--;
+            timerText.innerText = `Timeout in ${timeLeft}s`;
+            timeBar.style.width = `${(timeLeft / 60) * 100}%`;
+
+            if (timeLeft <= 0) {
+                clearInterval(countdown);
+                clearInterval(poller);
+                pollingSection.style.display = 'none';
+                timeoutSection.style.display = 'block';
+            }
+        }, 1000);
+
+        // 2. AJAX Polling (Checks DB every 3 seconds without refreshing)
+        const poller = setInterval(() => {
+            fetch(statusUrl)
+                .then(response => response.json())
+                .then(data => {
+                    if (data.paid) {
+                        // SUCCESS DETECTED
+                        clearInterval(poller);
+                        clearInterval(countdown);
+                        
+                        const icon = document.getElementById('main-icon');
+                        icon.className = "fas fa-check-circle text-success mb-4";
+                        icon.style.animation = "none";
+                        
+                        document.getElementById('status-text').innerText = "Payment Successful!";
+                        document.getElementById('spinner-container').style.display = "none";
+                        timeBar.classList.remove('progress-bar-animated', 'progress-bar-striped');
+                        
+                        setTimeout(() => {
+                            window.location.href = data.redirect_url || `/payments/completed/${orderId}/`;
+                        }, 1500);
+                    }
+                })
+                .catch(error => console.error('Error checking payment status:', error));
+        }, 3000); 
+    });
+</script>
+{% endblock %}

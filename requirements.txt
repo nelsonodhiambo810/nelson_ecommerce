@@ -1,0 +1,39 @@
+
+# ═══════════════════════════════════════════════════════════
+# NYAR GI JACK SOUND — Production Requirements
+# ═══════════════════════════════════════════════════════════
+# Pin exact versions for reproducible builds.
+# Update with: pip-compile requirements.in
+
+# ─── Core Django ─────────────────────────────────────────────
+Django==5.0.6
+ gunicorn==22.0.0              # Production WSGI server for Render
+
+# ─── Database ────────────────────────────────────────────────
+ psycopg2-binary==2.9.9        # PostgreSQL adapter
+dj-database-url==2.2.0        # Parse DATABASE_URL from Render environment
+
+# ─── Static Files ────────────────────────────────────────────
+whitenoise==6.7.0             # Serve static files without a CDN
+
+# ─── API & CORS ──────────────────────────────────────────────
+djangorestframework==3.15.2   # DRF — ready for React frontend decoupling
+django-cors-headers==4.4.0    # CORS headers for API access
+
+# ─── Images ──────────────────────────────────────────────────
+Pillow
+
+# ─── Environment Variables ───────────────────────────────────
+python-dotenv==1.0.1
+
+# ─── Admin Theme ─────────────────────────────────────────────
+django-jazzmin==3.0.0
+
+# ─── HTTP Requests (M-Pesa API calls) ────────────────────────
+requests==2.32.3
+
+# ─── Security ────────────────────────────────────────────────
+cryptography==42.0.8          # Needed by some auth flows
+
+# ─── Development Only (do not install in production) ─────────
+# pip install -r requirements-dev.txt
